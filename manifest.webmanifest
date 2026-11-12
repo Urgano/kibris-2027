@@ -1,0 +1,16 @@
+{
+  "name": "Kıbrıs 2027 · Gün Ailesi",
+  "short_name": "Kıbrıs 2027",
+  "description": "24–30 Ocak 2027 Kıbrıs tatilimiz: bugünün planı, program, asistan.",
+  "lang": "tr",
+  "start_url": "./#bugun",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1f4f3",
+  "theme_color": "#0d5c73",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml"}
+  ]
+}

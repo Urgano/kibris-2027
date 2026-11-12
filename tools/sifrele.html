@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Şifreli bölüm üretici</title><meta name="robots" content="noindex">
+<style>body{font-family:system-ui,sans-serif;max-width:720px;margin:24px auto;padding:0 16px;line-height:1.5}textarea,input{width:100%;font:14px ui-monospace,monospace;padding:8px;box-sizing:border-box}textarea{height:220px}button{padding:10px 16px;font-weight:700;margin-top:8px}</style></head>
+<body>
+<h1>Rezervasyon kodlarını şifrele</h1>
+<p>Bu sayfa hiçbir şeyi internete göndermez; şifreleme tarayıcınızda yapılır. Kodları aşağıya JSON olarak yazın, yeni aile şifresini girin, çıkan satırı <code>index.html</code> içindeki <code>const SECRET = …;</code> satırının yerine yapıştırın.</p>
+<label>Kodlar (JSON)<textarea id="j">{"groups":[{"title":"Örnek","rows":[["Açıklama","KOD123"]]}]}</textarea></label>
+<label>Aile şifresi<input id="p" type="text" autocomplete="off"></label>
+<button id="go">Şifrele</button>
+<p><textarea id="out" readonly style="height:120px"></textarea></p>
+<script>
+const b=a=>btoa(String.fromCharCode(...a));
+document.getElementById("go").onclick=async()=>{
+  const txt=document.getElementById("j").value,pw=document.getElementById("p").value;
+  try{JSON.parse(txt)}catch(e){alert("JSON hatalı: "+e.message);return}
+  if(pw.length<4){alert("Şifre en az 4 karakter olsun");return}
+  const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+  const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:250000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["encrypt"]);
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv},key,new TextEncoder().encode(txt)));
+  document.getElementById("out").value=`const SECRET = ${JSON.stringify({salt:b(salt),iv:b(iv),data:b(ct)})};`;
+};
+</script></body></html>
